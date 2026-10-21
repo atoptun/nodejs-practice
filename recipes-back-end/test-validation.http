@@ -1,0 +1,68 @@
+### Спроба створити рецепт без обов'язкового поля title
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "ingredients": ["flour", "sugar", "eggs"],
+  "instructions": "Mix everything together and bake at 180C for 45 minutes",
+  "cookingTime": 45,
+  "servings": 4,
+  "chefName": "John",
+  "categoryId": 1
+}
+
+### Спроба передати текст замість числа для cookingTime
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Chocolate Cake",
+  "ingredients": ["flour", "sugar", "cocoa", "eggs", "butter"],
+  "instructions": "Mix dry ingredients, add wet ingredients, bake at 180C",
+  "cookingTime": "forty-five minutes",
+  "servings": 8,
+  "chefName": "Gordon",
+  "categoryId": 2
+}
+
+### Спроба створити рецепт з надто короткою назвою
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Ok",
+  "ingredients": ["flour", "sugar", "eggs"],
+  "instructions": "Mix everything together and bake at 180C for 45 minutes",
+  "cookingTime": 45,
+  "servings": 4,
+  "chefName": "John",
+  "categoryId": 1
+}
+
+### Спроба створити відгук з рейтингом поза діапазоном 1-5
+POST http://localhost:3000/api/recipes/1/reviews
+Content-Type: application/json
+
+{
+  "content": "This recipe is absolutely amazing, best cake ever!",
+  "rating": 10,
+  "reviewerName": "Alice"
+}
+
+### Спроба отримати рецепт з некоректним id
+GET http://localhost:3000/api/recipes/abc
+
+### Спроба оновити рецепт без жодного поля
+PATCH http://localhost:3000/api/recipes/1
+Content-Type: application/json
+
+{}
+
+### Спроба відправити JSON з синтаксичною помилкою (забули кому)
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Chocolate Cake"
+  "ingredients": ["flour", "sugar", "cocoa"]
+}

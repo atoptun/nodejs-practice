@@ -1,0 +1,95 @@
+### Отримати всі рецепти
+GET http://localhost:3000/api/recipes
+
+### Фільтрація за категорією
+GET http://localhost:3000/api/recipes?categoryId=1
+
+### Швидкі рецепти
+GET http://localhost:3000/api/recipes?maxTime=30
+
+### Пошук за назвою
+GET http://localhost:3000/api/recipes?search=салат
+
+### Комбінація фільтрів
+GET http://localhost:3000/api/recipes?category=2&maxTime=20
+
+### Отримати один рецепт
+GET http://localhost:3000/api/recipes/1
+
+### Спроба отримати неіснуючий рецепт (404)
+GET http://localhost:3000/api/recipes/99999
+
+### Некоректний ID рецепта (400)
+GET http://localhost:3000/api/recipes/abc
+
+### Створити рецепт
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Грецький салат",
+  "ingredients": ["Помідори", "огірки", "маслини", "сир фета", "оливкова олія"],
+  "instructions": "Нарізати овочі кубиками. Додати маслини та покришений сир фета. Заправити оливковою олією та перемішати.",
+  "cookingTime": 10,
+  "servings": 4,
+  "difficulty": 4,
+  "chefName": "Марія",
+  "categoryId": 2
+}
+
+### Створити рецепт без обов'язкових полів (400)
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Тестовий рецепт"
+}
+
+### Створити рецепт з неіснуючою категорією (400)
+POST http://localhost:3000/api/recipes
+Content-Type: application/json
+
+{
+  "title": "Тестовий рецепт",
+  "ingredients": ["Тестові інгредієнти"],
+  "instructions": "Тестові інструкції",
+  "cookingTime": 10,
+  "servings": 4,
+  "difficulty": 4,
+  "categoryId": 99999
+}
+
+### Оновити час приготування
+PATCH http://localhost:3000/api/recipes/1
+Content-Type: application/json
+
+{
+  "cookingTime": 50
+}
+
+### Оновити кілька полів
+PATCH http://localhost:3000/api/recipes/1
+Content-Type: application/json
+
+{
+  "cookingTime": 45,
+  "servings": 10,
+  "chefName": "Олена Юріївна Шевченко"
+}
+
+### Оновити неіснуючий рецепт (404)
+PATCH http://localhost:3000/api/recipes/99999
+Content-Type: application/json
+
+{
+  "cookingTime": 30
+}
+
+### Видалити рецепт
+DELETE http://localhost:3000/api/recipes/4
+
+### Видалити неіснуючий рецепт (404)
+DELETE http://localhost:3000/api/recipes/99999
+
+### Неіснуючий маршрут (404)
+GET http://localhost:3000/api/nonexistent
