@@ -20,7 +20,6 @@ export const CreateReviewSchema = registry.register(
   z.object({
     content: z.string().min(10).max(500),
     rating: z.number().int().min(1).max(5),
-    reviewerName: z.string().min(2).max(50),
   }),
 );
 
@@ -54,6 +53,7 @@ registry.registerPath({
   path: "/api/recipes/{recipeId}/reviews",
   tags: ["Reviews"],
   summary: "Create review for a recipe",
+  security: [{ bearerAuth: [] }],
   request: {
     params: RecipeReviewParamsSchema,
     body: {
@@ -62,7 +62,7 @@ registry.registerPath({
   },
   responses: {
     201: { description: "Review created successfully" },
-    400: { description: "Recipe not found" },
+    401: { description: "Authentication required" },
     422: { description: "Validation error" },
   },
 });
@@ -72,6 +72,7 @@ registry.registerPath({
   path: "/api/reviews/{id}",
   tags: ["Reviews"],
   summary: "Update review",
+  security: [{ bearerAuth: [] }],
   request: {
     params: ReviewParamsSchema,
     body: {
@@ -80,6 +81,8 @@ registry.registerPath({
   },
   responses: {
     200: { description: "Review updated successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Review not found" },
     422: { description: "Validation error" },
   },
@@ -90,9 +93,12 @@ registry.registerPath({
   path: "/api/reviews/{id}",
   tags: ["Reviews"],
   summary: "Delete review",
+  security: [{ bearerAuth: [] }],
   request: { params: ReviewParamsSchema },
   responses: {
     204: { description: "Review deleted successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Review not found" },
   },
 });

@@ -59,6 +59,7 @@ registry.registerPath({
   path: "/api/categories",
   tags: ["Categories"],
   summary: "Create new category",
+  security: [{ bearerAuth: [] }],
   request: {
     body: {
       content: { "application/json": { schema: CreateCategorySchema } },
@@ -66,6 +67,7 @@ registry.registerPath({
   },
   responses: {
     201: { description: "Category created successfully" },
+    401: { description: "Authentication required" },
     409: { description: "Category with this name already exists" },
     422: { description: "Validation error" },
   },
@@ -76,6 +78,7 @@ registry.registerPath({
   path: "/api/categories/{id}",
   tags: ["Categories"],
   summary: "Update category",
+  security: [{ bearerAuth: [] }],
   request: {
     params: CategoryParamsSchema,
     body: {
@@ -84,6 +87,8 @@ registry.registerPath({
   },
   responses: {
     200: { description: "Category updated successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Category not found" },
     409: { description: "Category with this name already exists" },
     422: { description: "Validation error" },
@@ -95,9 +100,12 @@ registry.registerPath({
   path: "/api/categories/{id}",
   tags: ["Categories"],
   summary: "Delete category",
+  security: [{ bearerAuth: [] }],
   request: { params: CategoryParamsSchema },
   responses: {
     204: { description: "Category deleted successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Category not found" },
   },
 });

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import createHttpError from "http-errors";
 import prisma from "../../prisma/client.ts";
 import {
   CreateReviewBody,
@@ -15,6 +16,9 @@ export const getReviewsByRecipe = async (
 
   const reviews = await prisma.review.findMany({
     where: { recipeId },
+    include: {
+      user: { select: { id: true, username: true, name: true } },
+    },
   });
 
   res.status(200).json(reviews);
@@ -31,10 +35,15 @@ export const createReview = async (
     data: {
       content,
       rating,
-      reviewerName,
+      user: {
+        connect: { id: Number(req.user!.sub) },
+      },
       recipe: {
         connect: { id: recipeId },
       },
+    },
+    include: {
+      user: { select: { id: true, username: true, name: true } },
     },
   });
 
@@ -46,14 +55,30 @@ export const updateReview = async (
   res: Response,
 ) => {
   const { id } = req.params;
-  const { content, rating } = req.body;
 
-  const review = await prisma.review.update({
+  const review = await prisma.review.findUnique({
     where: { id },
-    data: { content, rating },
   });
 
-  res.status(200).json(review);
+  if (!review) {
+    throw createHttpError(404, "Review not found");
+  }
+
+  if (review.userId !== Number(req.user!.sub)) {
+    throw createHttpError(403, "You can only edit your own reviews");
+  }
+
+  const { content, rating } = req.body;
+
+  const updated = await prisma.review.update({
+    where: { id },
+    data: { content, rating },
+    include: {
+      user: { select: { id: true, username: true, name: true } },
+    },
+  });
+
+  res.status(200).json(updated);
 };
 
 export const deleteReview = async (
@@ -61,6 +86,18 @@ export const deleteReview = async (
   res: Response,
 ) => {
   const { id } = req.params;
+
+  const review = await prisma.review.findUnique({
+    where: { id },
+  });
+
+  if (!review) {
+    throw createHttpError(404, "Review not found");
+  }
+
+  if (review.userId !== Number(req.user!.sub)) {
+    throw createHttpError(403, "You can only delete your own reviews");
+  }
 
   await prisma.review.delete({
     where: { id },

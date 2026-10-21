@@ -12,6 +12,28 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+
+  recipes       Recipe[]
+  reviews       Review[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
 model Recipe {
   id           Int      @id @default(autoincrement())
   title        String
@@ -19,9 +41,10 @@ model Recipe {
   instructions String
   cookingTime  Int
   servings     Int
-  chefName     String
   createdAt    DateTime @default(now())
 
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
 
@@ -48,9 +71,10 @@ model Review {
   id           Int      @id @default(autoincrement())
   content      String
   rating       Int
-  reviewerName String
   createdAt    DateTime @default(now())
 
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
   recipeId Int
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }

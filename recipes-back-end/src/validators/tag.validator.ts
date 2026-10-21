@@ -48,6 +48,7 @@ registry.registerPath({
   path: "/api/tags",
   tags: ["Tags"],
   summary: "Create new tag",
+  security: [{ bearerAuth: [] }],
   request: {
     body: {
       content: { "application/json": { schema: CreateTagSchema } },
@@ -55,6 +56,7 @@ registry.registerPath({
   },
   responses: {
     201: { description: "Tag created successfully" },
+    401: { description: "Authentication required" },
     409: { description: "Tag with this name already exists" },
     422: { description: "Validation error" },
   },
@@ -65,6 +67,7 @@ registry.registerPath({
   path: "/api/tags/{id}",
   tags: ["Tags"],
   summary: "Update tag",
+  security: [{ bearerAuth: [] }],
   request: {
     params: TagParamsSchema,
     body: {
@@ -73,6 +76,8 @@ registry.registerPath({
   },
   responses: {
     200: { description: "Tag updated successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Tag not found" },
     409: { description: "Tag with this name already exists" },
     422: { description: "Validation error" },
@@ -84,9 +89,12 @@ registry.registerPath({
   path: "/api/tags/{id}",
   tags: ["Tags"],
   summary: "Delete tag",
+  security: [{ bearerAuth: [] }],
   request: { params: TagParamsSchema },
   responses: {
     204: { description: "Tag deleted successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Tag not found" },
   },
 });

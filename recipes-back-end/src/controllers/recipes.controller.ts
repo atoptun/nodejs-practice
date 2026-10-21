@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import createHttpError from "http-errors";
 import prisma from "../../prisma/client.ts";
 import type { Prisma } from "../../generated/prisma/client.ts";
 import {
@@ -47,6 +48,7 @@ export const getAllRecipes = async (
       take,
       orderBy,
       include: {
+        user: { select: { id: true, username: true, name: true } },
         category: true,
         tags: true,
       },
@@ -65,7 +67,6 @@ export const getAllRecipes = async (
   });
 };
 
-
 export const getRecipeById = async (
   req: Request<RecipeParams>,
   res: Response,
@@ -75,14 +76,19 @@ export const getRecipeById = async (
   const recipe = await prisma.recipe.findUnique({
     where: { id },
     include: {
+      user: { select: { id: true, username: true, name: true } },
       category: true,
       tags: true,
-      reviews: true,
+      reviews: {
+        include: {
+          user: { select: { id: true, username: true, name: true } },
+        },
+      },
     },
   });
 
   if (!recipe) {
-    return res.status(404).json({ error: "Recipe not found" });
+    throw createHttpError(404, "Recipe not found");
   }
 
   res.status(200).json(recipe);
@@ -98,7 +104,6 @@ export const createRecipe = async (
     instructions,
     cookingTime,
     servings,
-    chefName,
     categoryId,
     tagIds,
   } = req.body;
@@ -110,7 +115,9 @@ export const createRecipe = async (
       instructions,
       cookingTime,
       servings,
-      chefName,
+      user: {
+        connect: { id: Number(req.user!.sub) },
+      },
       category: {
         connect: { id: categoryId },
       },
@@ -119,6 +126,7 @@ export const createRecipe = async (
       },
     },
     include: {
+      user: { select: { id: true, username: true, name: true } },
       category: true,
       tags: true,
     },
@@ -132,13 +140,25 @@ export const updateRecipe = async (
   res: Response,
 ) => {
   const { id } = req.params;
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { id },
+  });
+
+  if (!recipe) {
+    throw createHttpError(404, "Recipe not found");
+  }
+
+  if (recipe.userId !== Number(req.user!.sub)) {
+    throw createHttpError(403, "You can only edit your own recipes");
+  }
+
   const {
     title,
     ingredients,
     instructions,
     cookingTime,
     servings,
-    chefName,
     categoryId,
     tagIds,
   } = req.body;
@@ -149,7 +169,6 @@ export const updateRecipe = async (
     instructions,
     cookingTime,
     servings,
-    chefName,
   };
 
   if (categoryId !== undefined) {
@@ -164,16 +183,17 @@ export const updateRecipe = async (
     };
   }
 
-  const recipe = await prisma.recipe.update({
+  const recipeUpd = await prisma.recipe.update({
     where: { id },
     data: updateData,
     include: {
+      user: { select: { id: true, username: true, name: true } },
       category: true,
       tags: true,
     },
   });
 
-  res.status(200).json(recipe);
+  res.status(200).json(recipeUpd);
 };
 
 export const deleteRecipe = async (
@@ -181,6 +201,18 @@ export const deleteRecipe = async (
   res: Response,
 ) => {
   const { id } = req.params;
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { id },
+  });
+
+  if (!recipe) {
+    throw createHttpError(404, "Recipe not found");
+  }
+
+  if (recipe.userId !== Number(req.user!.sub)) {
+    throw createHttpError(403, "You can only delete your own recipes");
+  }
 
   await prisma.recipe.delete({
     where: { id },

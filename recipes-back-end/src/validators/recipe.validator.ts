@@ -16,7 +16,6 @@ export const CreateRecipeSchema = registry.register(
     instructions: z.string().min(20),
     cookingTime: z.number().int().min(1).max(1440),
     servings: z.number().int().min(1).max(100),
-    chefName: z.string().min(2).max(50),
     categoryId: z.number().int().positive(),
     tagIds: z.array(z.number().int().positive()).optional(),
   }),
@@ -83,6 +82,7 @@ registry.registerPath({
   path: "/api/recipes",
   tags: ["Recipes"],
   summary: "Create new recipe",
+  security: [{ bearerAuth: [] }],
   request: {
     body: {
       content: {
@@ -94,6 +94,7 @@ registry.registerPath({
   },
   responses: {
     201: { description: "Recipe created successfully" },
+    401: { description: "Authentication required" },
     422: { description: "Validation error" },
   },
 });
@@ -103,6 +104,7 @@ registry.registerPath({
   path: "/api/recipes/{id}",
   tags: ["Recipes"],
   summary: "Update recipe",
+  security: [{ bearerAuth: [] }],
   request: {
     params: RecipeParamsSchema,
     body: {
@@ -115,6 +117,8 @@ registry.registerPath({
   },
   responses: {
     200: { description: "Recipe updated successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Recipe not found" },
     422: { description: "Validation error" },
   },
@@ -125,11 +129,14 @@ registry.registerPath({
   path: "/api/recipes/{id}",
   tags: ["Recipes"],
   summary: "Delete recipe",
+  security: [{ bearerAuth: [] }],
   request: {
     params: RecipeParamsSchema,
   },
   responses: {
     204: { description: "Recipe deleted successfully" },
+    401: { description: "Authentication required" },
+    403: { description: "Forbidden" },
     404: { description: "Recipe not found" },
   },
 });
