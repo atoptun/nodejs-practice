@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Головна</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Ласкаво просимо</h1>
+    <% if (username) { %>
+      <p>Ви увійшли як <strong><%= username %></strong></p>
+      <form method="POST" action="/logout">
+        <button type="submit">Вийти</button>
+      </form>
+    <% } else { %>
+      <a href="/register"><button>Зареєструватися</button></a>
+      <a href="/login"><button>Увійти</button></a>
+    <% } %>
+  </main>
+</body>
+</html>

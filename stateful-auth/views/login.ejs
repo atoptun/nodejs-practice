@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Вхід</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Вхід</h1>
+
+    <% if (error) { %>
+      <mark style="background-color: #d81b60; color: white;"><%= error %></mark>
+    <% } %>
+
+    <form method="POST" action="/login">
+      <div>
+        <label for="username">Ім'я користувача</label>
+        <input type="text" id="username" name="username" value="<%= data?.username || '' %>">
+      </div>
+
+      <div>
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password">
+      </div>
+
+      <button type="submit">Увійти</button>
+    </form>
+
+    <p>Ще не маєте акаунту? <a href="/register">Зареєструватися</a></p>
+  </main>
+</body>
+</html>
