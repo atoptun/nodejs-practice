@@ -4,3 +4,7 @@ node_modules
 
 /prisma/generated/prisma
 generated/prisma
+
+.vitest/
+coverage/
+test-results/

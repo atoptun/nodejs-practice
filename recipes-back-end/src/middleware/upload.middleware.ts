@@ -8,7 +8,7 @@ const destination = resolve("tmp");
 
 const allowMimeTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-await mkdir(destination);
+await mkdir(destination, { recursive: true });
 
 const storage = multer.diskStorage({
   destination,
