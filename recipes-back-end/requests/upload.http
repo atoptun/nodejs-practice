@@ -1,0 +1,14 @@
+### Завантаження зображення
+POST http://localhost:3000/upload
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="image"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< ./files/localhost_5174_auth.png
+------Boundary--
+
+### Delete
+DELETE http://localhost:3000/upload/demo/ihdjeybmg7dw3siyjdzg
+

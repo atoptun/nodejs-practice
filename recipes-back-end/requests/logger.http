@@ -1,0 +1,22 @@
+### Logger hello
+GET http://localhost:3000/logger/hello
+
+### Логін з успіхом
+POST http://localhost:3000/logger/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com"
+}
+
+### Логін з помилкою
+POST http://localhost:3000/logger/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com"
+}
+
+### Logger user
+GET http://localhost:3000/logger/users/2
+
